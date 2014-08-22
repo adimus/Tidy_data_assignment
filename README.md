@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## What is here
 * "UCI HAR Dataset" is the folder containing the raw data, README file describing the experiment, variable names and information about them in files (features.txt and feature_info.txt), file called activity_labels.txt contains the activity and corresponding code. folders test and train contain the raw data sets.
 * the script run_analysis.R should be run from a folder containing  the "UCI HAR Dataset".
@@ -10,3 +11,9 @@
 * calculates the average for these variables for each activity type performed by a subject.
 * writes the average for the variables to a file called output.txt and saves it in the current directory. 
 
+=======
+Tidy_data_assignment
+====================
+
+contains raw data and script to create a tidy data set 
+>>>>>>> 522a22457cea1978deeda955c81b1afa64b7c249
