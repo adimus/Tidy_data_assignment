@@ -1,0 +1,360 @@
+c=c(a,b,c,d,e,f)
+C=c(a,b,c,d,e,f)
+C=c(g,b,c,d,e,f)
+C= c(a,b,c,d,e,f)
+C <- c(a,b,c,d,e,f)
+C <- c("a","b","c","d","e","f")
+data.frame(cbind(C,A,B), row.names=C)
+F=data.frame(cbind(C,A,B), row.names=C)
+rownames(F)[e]
+rownames(F)[e,]
+rownames(F)= a
+subset(F, select = rownames==a)
+subset(F, select = rownames=="a")
+rownames(F)==a
+rownames(F)=="a"
+T=as.logical(rownames(F)=="a")
+F[T]
+F[T==TRUE]
+T[TRUE]
+write.table(U_wtDE_AsheatmapOrder_wtihCount,file = "/Users/azieb/Documents/EdgeR_NestedFactorialModel/wt_stageEffect_AsheatmapOrder.txt")
+colnames(design)
+lrtU_lop = glmLRT(U, fitU, coef="Genotypelop:StageL")
+summary(dtU_lop <- decideTestsDGE(lrtU_lop, p=0.05, adjust="BH"))#
+isDE = as.logical(dtU_lop)#
+DEnames=rownames(U)[isDE]#
+length(DEnames)#
+U_lop_result = topTags(lrtU_lop, n=nrow(lrtU_lop$table))$table#
+#
+U_lop_DE = lrtU_lop[DEnames]$table#
+#
+row.U_lop_result_inCount = match(rownames(U_lop_result), rownames(U$counts))#
+U_lop_result_withCount = cbind(U_lop_result, U$counts[row.U_lop_result_inCount,])#
+row.U_lop_DE_inCount = match(rownames(U_lop_DE), rownames(U$counts))#
+#
+U_lop_DE_withCount = cbind(U_lop_DE, U$counts[row.U_lop_DE_inCount,])
+head(U_lop_DE_withCount)
+write.table(U_lop_result_withCount, file="/Users/azieb/Documents/EdgeR_NestedFactorialModel/lop_stageEffect_allgenes.txt")#
+#
+write.table(U_lop_DE_withCount, file="/Users/azieb/Documents/EdgeR_NestedFactorialModel/lop_stageEffect_DEgenes.txt")
+head(subset(U_lop_DE_withCount, select = c(9:12)))
+U_lopDE_4heatmap = subset(U_lop_DE_withCount, select = c(9:12))#
+#
+U_lopDesign = data.frame(row.names = colnames(U_lopDE_4heatmap), condition = c("Early", "Early", "Late", "Late"), Replicate = c("1", "2", "1", "2"))#
+#
+U_lopDE_cdsFullBlind = newCountDataSet(U_lopDE_4heatmap, U_lopDesign)#
+#
+U_lopDE_cdsFullBlind = estimateSizeFactors(U_lopDE_cdsFullBlind)#
+#
+U_lopDE_cdsFullBlind = estimateDispersions(U_lopDE_cdsFullBlind, method = "blind")#
+#
+U_lopDE_vsdFull = getVarianceStabilizedData(U_lopDE_cdsFullBlind)#
+#
+U_lopDE_vsdFull_matrix = data.matrix(U_lopDE_vsdFull)#
+#
+png("/Users/azieb/Documents/EdgeR_NestedFactorialModel/lop_stageEffect_heatmap.png")#
+#
+ heatmap.2(U_lopDE_vsdFull_matrix, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none", trace="none",cexCol=0.9, dendrogram="column", labRow=NA)#
+ dev.off()#
+# To get matrix same order as in heatmap.#
+U_lopDE_heatmap =  heatmap.2(U_lopDE_vsdFull_matrix, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none", trace="none",cexCol=0.9, dendrogram="column", labRow=NA)#
+#
+U_lopDE_asHeatmapOrder_matrix = U_lopDE_vsdFull_matrix[rev(U_lopDE_heatmap$rowInd), U_lopDE_heatmap$colInd]#
+#
+rowMatch= match(rownames(U_lopDE_asHeatmapOrder_matrix), rownames(U_lop_DE_withCount))#
+#
+U_lopDE_AsheatmapOrder_wtihCount = cbind(U_lopDE_asHeatmapOrder_matrix, U_lop_DE_withCount[rowMatch,])#
+#
+write.table(U_lopDE_AsheatmapOrder_wtihCount,file = "/Users/azieb/Documents/EdgeR_NestedFactorialModel/lop_stageEffect_AsheatmapOrder.txt")
+head(U_lopDE_AsheatmapOrder)
+head(U_lopDE_AsheatmapOrder_wtihCount)
+ls()
+setdiff( ls(), c("newCount","EdgeRCount","Genotype","Stage", "rep","newCount_DGElist", "U", "design","fitU","lrtU_wt","U_wt_DE","U_wt_result", "U_wt_DE_withCount","lrtU_lop","U_lop_DE","U_lop_result", "U_lop_DE_withCount","U_wtDE_AsheatmapOrder_wtihCount","U_lopDE_AsheatmapOrder_wtihCount") )
+ls()
+rm(list=ls()[! ls() %in% c("newCount","EdgeRCount","Genotype","Stage", "rep","newCount_DGElist", "U", "design","fitU","lrtU_wt","U_wt_DE","U_wt_result", "U_wt_DE_withCount","lrtU_lop","U_lop_DE","U_lop_result", "U_lop_DE_withCount","U_wtDE_AsheatmapOrder_wtihCount","U_lopDE_AsheatmapOrder_wtihCount")])
+ls()
+q()
+ls()
+head(EdgeRCount)
+G=factor((substring(colnames(EdgeRCount),1,3)), levels = c("Wt_", "lop", "pol"))
+S = factor((substring(colnames(EdgeRCount), 4,4)), levels = c("E", "L"))
+R = factor((substring(colnames(EdgeRCount), 5,5)), levels = c("1", "2"))
+EdgeR_DGElist = DGEList(counts=EdgeRCount, group= G)
+All_4MDS=calcNormFactors(EdgeR_DGElist)
+plotMDS(All_4MDS)
+head(subset(EdgeRCount, select=c(1:4)))
+S = factor((substring(colnames(subset(EdgeRCount, select=c(1:4))), 4,4)), levels = c("E", "L"))
+R = factor((substring(colnames(subset(EdgeRCount, select=c(1:4))), 5,5)), levels = c("1", "2"))
+EdgeR_DGElist = DGEList(counts=subset(EdgeRCount, select=c(1:4)), group=S)
+wt_4MDS=calcNormFactors(EdgeR_DGElist)
+plotMDS(wt_4MDS)
+head(subset(EdgeRCount, select=c(5:8))
+)
+S = factor((substring(colnames(subset(EdgeRCount, select=c(5:8))), 4,4)), levels = c("E", "L"))
+R = factor((substring(colnames(subset(EdgeRCount, select=c(5:8))), 5,5)), levels = c("1", "2"))
+EdgeR_DGElist = DGEList(counts=subset(EdgeRCount, select=c(5:8)), group=S)
+lop_4MDS=calcNormFactors(EdgeR_DGElist)
+plotMDS(lop_4MDS)
+head(subset(EdgeRCount, selec=(3:4,7:10)))
+head(subset(EdgeRCount, selec=c(3:4,7:10)))
+G=factor((substring(colnames(subset(EdgeRCount, selec=c(3:4,7:10))),1,3)), levels = c("Wt_", "lop", "pol"))
+R = factor((substring(colnames(subset(EdgeRCount, selec=c(3:4,7:10))), 5,5)), levels = c("1", "2"))
+EdgeR_DGElist = DGEList(counts=subset(EdgeRCount, select=c(3:4,7:10)), group=G)
+All_Late4MDS=calcNormFactors(EdgeR_DGElist)
+plotMDS(All_Late4MDS)
+plotMDS(U)
+ls()
+q()
+ls()
+head(rpkm_log2)
+hea(rpkm_corNewnames)
+head(rpkm_corNewnames)
+head(rpkm_corNewnames[1,])
+head(rpkm_corNewnames[1:5,1])
+head(rpkm_corNewnames[,1])
+head(rpkm_log2[1:5,2])
+cor(rpkm_log2[,13], rpkm_log2[,14],use="complete.obs")
+cor(rpkm_log2[,1], rpkm_log2[,2],use="complete.obs")
+cor(rpkm_log2[,1], rpkm_log2[,3],use="complete.obs")
+cor(rpkm_log2[,9], rpkm_log2[,10],use="complete.obs")
+cor(rpkm_log2[,11], rpkm_log2[,12],use="complete.obs")
+cor(rpkm_log2[,15], rpkm_log2[,16],use="complete.obs")
+rpkm_corNewnames
+ls()
+colnames(design)
+lrtU_Wt2lop = glmLRT(U, fitU, contrast=c(0,0,0,0,0,0,-1,1))
+lrtU_Wt2lop = glmLRT(fitU, contrast=c(0,0,0,0,0,0,-1,1))
+lrtU_Wt2lop = glmLRT(U, fitU, contrast=c(0,0,0,0,-1,1))
+summary(dtU_Wt2lop <- decideTestsDGE(lrtU_Wt2lop, p=0.05, adjust="BH"))
+isDE = as.logical(dtU_Wt2lop)#
+DEnames=rownames(U)[isDE]#
+length(DEnames)
+U_Wt2lop_result = topTags(lrtU_Wt2lop, n=nrow(lrtU_Wt2lop$table))$table#
+#
+U_Wt2lop_DE = lrtU_Wt2lop[DEnames]$table#
+#
+row.U_Wt2lop_result_inCount = match(rownames(U_Wt2lop_result), rownames(U$counts))#
+U_Wt2lop_result_withCount = cbind(U_Wt2lop_result, U$counts[row.U_Wt2lop_result_inCount,])#
+row.U_Wt2lop_DE_inCount = match(rownames(U_Wt2lop_DE), rownames(U$counts))#
+#
+U_Wt2lop_DE_withCount = cbind(U_Wt2lop_DE, U$counts[row.U_Wt2lop_DE_inCount,])
+head(U_Wt2lop_DE_withCount)
+write.table(U_Wt2lop_result_withCount, file="/Users/azieb/Documents/EdgeR_NestedFactorialModel/Wt2lop_respondingDifferently_allgenes.txt")#
+#
+write.table(U_lWt2op_DE_withCount, file="/Users/azieb/Documents/EdgeR_NestedFactorialModel/Wt2lop_respondingDiffrently_DEgenes.txt")
+write.table(U_Wt2op_DE_withCount, file="/Users/azieb/Documents/EdgeR_NestedFactorialModel/Wt2lop_respondingDiffrently_DEgenes.txt")
+write.table(U_Wt2lop_DE_withCount, file="/Users/azieb/Documents/EdgeR_NestedFactorialModel/Wt2lop_respondingDiffrently_DEgenes.txt")
+head(subset(U_Wt2lop_DE_withCount, select=c(5:12)))
+head(subset(U_Wt2lop_DE_withCount, select=c(5:10)))
+U_Wt2lopDE_4heatmap = subset(U_Wt2lop_DE_withCount, select = c(5:10))#
+#
+U_Wt2lopDesign = data.frame(row.names = colnames(U_Wt2lopDE_4heatmap), condition = c("Early", "Early", "Late", "Late","Early","Early","Late","Late"), Replicate = c("1", "2", "1", "2","1","2"))#
+#
+U_Wt2lopDE_cdsFullBlind = newCountDataSet(U_Wt2lopDE_4heatmap, U_Wt2lopDesign)#
+#
+U_Wt2lopDE_cdsFullBlind = estimateSizeFactors(U_Wt2lopDE_cdsFullBlind)#
+#
+U_Wt2lopDE_cdsFullBlind = estimateDispersions(U_Wt2lopDE_cdsFullBlind, method = "blind")#
+#
+U_Wt2lopDE_vsdFull = getVarianceStabilizedData(U_Wt2lopDE_cdsFullBlind)#
+#
+U_Wt2lopDE_vsdFull_matrix = data.matrix(U_Wt2lopDE_vsdFull)#
+#
+png("/Users/azieb/Documents/EdgeR_NestedFactorialModel/Wt2lop_stageEffect_heatmap.png")#
+#
+ heatmap.2(U_Wt2lopDE_vsdFull_matrix, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none", trace="none",cexCol=0.9, dendrogram="column", labRow=NA)#
+ dev.off()
+U_Wt2lopDE_4heatmap = subset(U_Wt2lop_DE_withCount, select = c(5:12))#
+#
+U_Wt2lopDesign = data.frame(row.names = colnames(U_Wt2lopDE_4heatmap), condition = c("Early", "Early", "Late", "Late","Early","Early","Late","Late"), Replicate = c("1", "2", "1", "2","1","2","1","2"))#
+#
+U_Wt2lopDE_cdsFullBlind = newCountDataSet(U_Wt2lopDE_4heatmap, U_Wt2lopDesign)#
+#
+U_Wt2lopDE_cdsFullBlind = estimateSizeFactors(U_Wt2lopDE_cdsFullBlind)#
+#
+U_Wt2lopDE_cdsFullBlind = estimateDispersions(U_Wt2lopDE_cdsFullBlind, method = "blind")#
+#
+U_Wt2lopDE_vsdFull = getVarianceStabilizedData(U_Wt2lopDE_cdsFullBlind)#
+#
+U_Wt2lopDE_vsdFull_matrix = data.matrix(U_Wt2lopDE_vsdFull)#
+#
+png("/Users/azieb/Documents/EdgeR_NestedFactorialModel/Wt2lop_stageEffect_heatmap.png")#
+#
+ heatmap.2(U_Wt2lopDE_vsdFull_matrix, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none", trace="none",cexCol=0.9, dendrogram="column", labRow=NA)#
+ dev.off()
+heatmap.2(U_Wt2lopDE_vsdFull_matrix, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none", trace="none",cexCol=0.9, dendrogram="column", labRow=NA)#
+ dev.off()
+png("/Users/azieb/Documents/EdgeR_NestedFactorialModel/Wt2lop_stageEffect_heatmap.png")#
+#
+ heatmap.2(U_Wt2lopDE_vsdFull_matrix, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none", trace="none",cexCol=0.9, dendrogram="column", labRow=NA)#
+ dev.off()
+U_lopDE_heatmap =  heatmap.2(U_lopDE_vsdFull_matrix, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none", trace="none",cexCol=0.9, dendrogram="column", labRow=NA)#
+#
+U_lopDE_asHeatmapOrder_matrix = U_lopDE_vsdFull_matrix[rev(U_lopDE_heatmap$rowInd), U_lopDE_heatmap$colInd]#
+#
+rowMatch= match(rownames(U_lopDE_asHeatmapOrder_matrix), rownames(U_lop_DE_withCount))#
+#
+U_lopDE_AsheatmapOrder_wtihCount = cbind(U_lopDE_asHeatmapOrder_matrix, U_lop_DE_withCount[rowMatch,])#
+#
+write.table(U_lopDE_AsheatmapOrder_wtihCount,file = "/Users/azieb/Documents/EdgeR_NestedFactorialModel/lop_stageEffect_AsheatmapOrder.txt")
+U_Wt2lopDE_heatmap =  heatmap.2(U_Wt2lopDE_vsdFull_matrix, col=redgreen(75), scale="row", key=T, keysize=1.5, density.info="none", trace="none",cexCol=0.9, dendrogram="column", labRow=NA)#
+#
+U_Wt2lopDE_asHeatmapOrder_matrix = U_Wt2lopDE_vsdFull_matrix[rev(U_Wt2lopDE_heatmap$rowInd), U_Wt2lopDE_heatmap$colInd]#
+#
+rowMatch= match(rownames(U_Wt2lopDE_asHeatmapOrder_matrix), rownames(U_Wt2lop_DE_withCount))#
+#
+U_Wt2lopDE_AsheatmapOrder_wtihCount = cbind(U_Wt2lopDE_asHeatmapOrder_matrix, U_Wt2lop_DE_withCount[rowMatch,])#
+#
+write.table(U_Wt2lopDE_AsheatmapOrder_wtihCount,file = "/Users/azieb/Documents/EdgeR_NestedFactorialModel/Wt2lop_stageEffect_AsheatmapOrder.txt")
+q()
+head(T2C)
+sum(T2c[1,1],T2C[2,1])
+sum(T2C[1,1],T2C[2,1])
+head(t2c)
+rowSums(t2c)
+colSums(t2)
+colSums(t2c)
+head(difference)
+sum(difference)
+23520+155675
+difference/sum(difference)
+head(t2c[,1] - t2c[,2])
+(t2c[,1] - t2c[,2])/sum(t2c[,1]-t2c[,2])
+colSums(T2C)/sum(difference)
+sum(difference)/ colSums(T2C)
+X = c(80,10,6, 3, 1)
+y = c(20, 20, 10, 50, 400)
+le= c(100, 50, 25, 5, 1)
+name = c("A","B", "c", "D", "E")
+ex = cbind(X,y,le)
+rownames(ex)= name
+ex
+exRpkm = ex[1:2]/ex$le*1e9/colSums(ex[1:2])
+exRpkm = ex[1:2]/ex[,3]*1e9/colSums(ex[1:2])
+X/le
+(X/le)*1e9/sum(X)
+mean((X/le)*1e9/sum(X))
+X*1e9/le*sum(X)
+(X*1e9)/(le*sum(X))
+(y*1e9)/(le*sum(y))
+mean((y*1e9)/(le*sum(y)))
+z= (y*le)/le
+z
+z= sum((y*le)/le)
+z
+(y*le*1e6)/le*(sum(y))
+Tmp_y = (y*le*1e6)/le*(sum(y))
+Tmp_y
+((z*1e3)/(sum(y)*len))*Tmp_y
+((z*1e3)/(sum(y)*le))*Tmp_y
+(y*1e9)/(le*sum(y))
+Tmp_x = (X*1e*1e6)/le*sum(X)
+Tmp_x = (X*le*1e6)/le*sum(X)
+Tmp_x
+Tmp_y
+mean(Tmp_x)
+mean(Tmp_y)
+Tmp_y = (y*le*1e6)/(le*sum(y))
+Tmp_x = (X*le*1e6)/(le*sum(X))
+Tmp_y
+Tmp_x
+mean(Tmp_y)
+mean(Tmp_x)
+(y/sum(y))*1e6
+(x/(sum(x))*1e6
+)
+(X/Sum(X))*1e6
+(X/sum(X))*1e6
+q()
+setwd("/Users/azieb/Desktop/Getting_and_cleaning_data_coursera_2014")
+test = read.table("/UCI HAR Dataset/test/Inertial Signals/body_acc_x_test.txt")
+test = read.table("./UCI HAR Dataset/test/Inertial Signals/body_acc_x_test.txt")
+head(test,3)
+dim(test)
+test = read.table("./UCI HAR Dataset/test/Inertial Signals/body_acc_y_test.txt")
+dim(test)
+test = read.table("./UCI HAR Dataset/test/Inertial Signals/X_test.txt")
+test = read.table("./UCI HAR Dataset/test/X_test.txt")
+dim(test)
+test = read.table("./UCI HAR Dataset/test/y_test.txt")
+dim(test)
+getwd()
+source("run_analysis.R")
+source("run_analysis.R")
+getwd()
+setwd("/Users/azieb/Desktop/Getting_and_cleaning_data_coursera_2014")
+source("run_analysis.R")
+ls()
+dim(x_test)
+dim(y_test)
+merged_test = cbind(y_test, x_test)#
+merged_train = cbind(y_train, x_train)
+merged_data = rind(merged_test, merged_train)
+merged_data = rbind(merged_test, merged_train)
+dim(merged_data)
+head(merged_data)
+features = read.table("features.txt")
+head(features)
+gsub("-", ".", features)
+head(features)
+gsub("-", ".", features[2])
+features[,2] = gsub("-", ".", features[,2])
+head(features)
+features[,2] = gsub("\\()", "", features[,2])
+head(features)
+tail(features)
+features[,2] = gsub(",", "_", features[,2])
+tail(features)
+variable_name = feature[,2]
+variable_name = features[,2]
+head(variable_name)
+str(variable_name)
+tail(features)
+variable_name = features$V2
+head(variable_name)
+head(merged_data)
+max(merged_data$V1)
+dim(merged_data$V1)
+dim(merged_data)
+dim(features)
+merged_data$V1[1]
+activity = read.table("activity_label.txt")
+activity = read.table("activity_labels.txt")
+head(activity)
+merged_data[merged_data$V1 == activity$V1[1], 1]
+head(merged_data[merged_data$V1 == activity$V1[2], 1],1)
+head(merged_data[merged_data$V1 == activity$V1[2], 1],3)
+if(merged_data$V1 == activity$V1) {#
+	merged_data$V1 = activity$V2#
+}
+head(merged_data,1)
+head(merged_data[1],1)
+tail(merged_data[1],1)
+head(activity)
+colnames(merged_data)[1]
+head(merged_data[1],1)
+merged_data$activity = activity[match(merged_data$V1, activity$V1),2]
+head(merged_data[1:2], 1)
+head(merged_data[1:3], 1)
+head(merged_data[1:4], 1)
+head(merged_data$activity, 1)
+dim(merged_data)
+head(merged_data[c(1,563)], 1)
+head(merged_data[c(1,563)], )
+tail(merged_data[c(1,563)], )
+activity
+head(merged_data[,c(563, 2:562)], 1)
+dim(merged_data)
+length(variable_name)
+merged_data = merged_data[,c(563, 2:562)]
+dim(merged_data)
+test= merged_data
+dim(test)
+colnames(test)[2:562] = variable_names
+colnames(test)[2:562] = variable_name
+colnames(test)[1:3]
+colnames(test)[50:54]
+colnames(test)[562]
+head(test[1:3])
+colnames(merged_data)[2:562] = variable_name
+q()
